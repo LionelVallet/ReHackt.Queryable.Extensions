@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Description>Provides System.Linq.IQueryable extensions such as filtering, ordering, paging, etc.</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Company>ReHackt</Company>
+    <Authors>Lionel Vallet</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/LionelVallet/ReHackt.Queryable.Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/LionelVallet/ReHackt.Queryable.Extensions</RepositoryUrl>
+    <PackageReleaseNotes>https://github.com/LionelVallet/ReHackt.Queryable.Extensions/releases</PackageReleaseNotes>
+    <PackageTags>Linq, Queryable, filtering, query syntax, parser</PackageTags>
+  </PropertyGroup>
+
+</Project>
