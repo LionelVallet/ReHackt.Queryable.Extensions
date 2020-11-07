@@ -8,13 +8,21 @@ Some useful System.Linq.IQueryable extensions such as filtering, ordering, pagin
 For example
 
 ``` csharp
+string query = @"BusinessName eq ""MyCompany"" and (""john.doe"" in Email or (FirstName eq ""John"" and LastName eq ""Doe"")) and (Amount lt 1000 or IsEnabled eq false)";
 
+if(QueryableFilter<User>.TryParse(query, out QueryableFilter<User> filter) {
+    IQueryable<User> users = _userManager.Users.Filter(filter);
+}
+else { /* Handle invalid query */ };
 ```
 
 Is equivalent to
 
 ``` csharp
-
+IQueryable<User> users = _userManager.Users
+                            .Where(u => u.BusinessName == "MyCompany"
+                                && (u.Email.Contains("john.doe") || (u.FirstName == "John" && u.LastName == "Doe"))
+                                && (u.Amount < 1000 || u.IsEnabled == false);
 ```
 
 ### Supported in query
