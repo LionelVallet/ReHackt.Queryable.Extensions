@@ -11,6 +11,7 @@
     <RepositoryUrl>https://github.com/LionelVallet/ReHackt.Queryable.Extensions</RepositoryUrl>
     <PackageReleaseNotes>https://github.com/LionelVallet/ReHackt.Queryable.Extensions/releases</PackageReleaseNotes>
     <PackageTags>Linq, Queryable, filtering, query syntax, parser</PackageTags>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
 </Project>
