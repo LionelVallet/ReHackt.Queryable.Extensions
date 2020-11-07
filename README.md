@@ -3,7 +3,7 @@ Some useful System.Linq.IQueryable extensions such as filtering, ordering, pagin
 
 ## QueryableFilter
 
-`QueryableFilter<T>` allows to dynamically filter an `IQueryable<T>` with a query string.
+`QueryableFilter<T>` allows to dynamically filter an `IQueryable<T>` with a query string. For example, this can be useful for an API whose clients can filter a collection of entities on any of its properties, or create complex logical queries.
 
 For example
 
