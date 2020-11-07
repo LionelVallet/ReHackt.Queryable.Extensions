@@ -1,2 +1,14 @@
 # ReHackt.Queryable.Extensions
-System.Linq.IQueryable extensions such as filtering, ordering, paging...
+Some useful System.Linq.IQueryable extensions such as filtering, ordering, paging...
+
+## QueryableFilter
+
+## IQueryable extensions
+
+### ApplyFilter
+
+### WhereIf
+
+### PageBy
+
+### OrderBy, OrderByDescending, ThenBy, ThenByDescending
