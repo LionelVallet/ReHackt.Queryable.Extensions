@@ -1,12 +1,11 @@
-﻿using ReHackt.Queryable.Extensions;
+﻿using System.Linq;
 using System.Linq.Expressions;
+using System;
 
-namespace System.Linq
+namespace ReHackt.Queryable.Extensions
 {
     public static class QueryableExtensions
     {
-        #region Filtering
-
         /// <summary>
         /// Filters a sequence of values based on a filter.
         /// </summary>
@@ -18,6 +17,7 @@ namespace System.Linq
         public static IQueryable<T> Filter<T>(this IQueryable<T> source, QueryableFilter<T> filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
+
             return filter.Apply(source);
         }
 
@@ -32,9 +32,9 @@ namespace System.Linq
         /// <exception cref="ArgumentException">Thrown when filter query is invalid.</exception>
         public static IQueryable<T> Filter<T>(this IQueryable<T> source, string filterQuery)
         {
-            return QueryableFilter<T>.TryParse(filterQuery, out QueryableFilter<T> filter) ?
-                source.Filter(filter) :
-                throw new ArgumentException("Invalid filter query", nameof(filterQuery));
+            return QueryableFilter<T>.TryParse(filterQuery, out QueryableFilter<T> filter)
+                ? source.Filter(filter)
+                : throw new ArgumentException("Invalid filter query", nameof(filterQuery));
         }
 
         /// <summary>
@@ -44,17 +44,17 @@ namespace System.Linq
         /// <param name="source">An <see cref="IQueryable"/> to filter.</param>
         /// <param name="condition">A condition to satisfy in order to filter the sequence.</param>
         /// <param name="predicate">A function to test each element for a condition.</param>
-        /// <returns>An <see cref="IQueryable"/> that contains elements from the input sequence that satisfy the condition specified by predicate if the main condition is satisfied, or all the input sequence otherwise.</returns>
+        /// <returns>An <see cref="IQueryable"/> that contains elements from the input sequence that 
+        /// satisfy the condition specified by predicate if the main condition is satisfied, or all the 
+        /// input sequence otherwise.</returns>
         /// <exception cref="ArgumentNullException">Thrown when source or predicate is null.</exception>
         public static IQueryable<T> WhereIf<T>(this IQueryable<T> source, bool condition, Expression<Func<T, bool>> predicate)
         {
             return condition ? source.Where(predicate) : source;
         }
 
-        #endregion
 
 
-        #region Ordering
 
         /// <summary>
         /// Sorts the elements of a sequence in ascending order according to multiple keys.
@@ -66,6 +66,7 @@ namespace System.Linq
         public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> source, params string[] keys)
         {
             if (keys == null || keys.Length < 1) throw new ArgumentNullException(nameof(keys));
+
             var orderedSource = source.OrderBy(keys[0]);
             for (int i = 1; i < keys.Length; i++)
             {
@@ -83,7 +84,7 @@ namespace System.Linq
         /// <returns>An <see cref="IOrderedQueryable"/> whose elements are sorted in ascending order according to a key.</returns>
         public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> source, string key)
         {
-            return CallOrderedQueryable(source, nameof(Queryable.OrderBy), key);
+            return CallOrderedQueryable(source, nameof(System.Linq.Queryable.OrderBy), key);
         }
 
         /// <summary>
@@ -96,6 +97,7 @@ namespace System.Linq
         public static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> source, params string[] keys)
         {
             if (keys == null || keys.Length < 1) throw new ArgumentNullException(nameof(keys));
+
             var orderedSource = source.OrderByDescending(keys[0]);
             for (int i = 1; i < keys.Length; i++)
             {
@@ -113,7 +115,7 @@ namespace System.Linq
         /// <returns>An <see cref="IOrderedQueryable"/> whose elements are sorted in descending order according to a key.</returns>
         public static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> source, string key)
         {
-            return CallOrderedQueryable(source, nameof(Queryable.OrderByDescending), key);
+            return CallOrderedQueryable(source, nameof(System.Linq.Queryable.OrderByDescending), key);
         }
 
         /// <summary>
@@ -125,7 +127,7 @@ namespace System.Linq
         /// <returns>An <see cref="IOrderedQueryable"/> whose elements are sorted in ascending order according to a key.</returns>
         public static IOrderedQueryable<T> ThenBy<T>(this IOrderedQueryable<T> source, string key)
         {
-            return CallOrderedQueryable(source, nameof(Queryable.ThenBy), key);
+            return CallOrderedQueryable(source, nameof(System.Linq.Queryable.ThenBy), key);
         }
 
         /// <summary>
@@ -137,7 +139,7 @@ namespace System.Linq
         /// <returns>An <see cref="IOrderedQueryable"/> whose elements are sorted in descending order according to a key.</returns>
         public static IOrderedQueryable<T> ThenByDescending<T>(this IOrderedQueryable<T> source, string key)
         {
-            return CallOrderedQueryable(source, nameof(Queryable.ThenByDescending), key);
+            return CallOrderedQueryable(source, nameof(System.Linq.Queryable.ThenByDescending), key);
         }
 
         private static IOrderedQueryable<T> CallOrderedQueryable<T>(this IQueryable<T> source, string methodName, string key)
@@ -146,7 +148,7 @@ namespace System.Linq
             var body = key.Split('.').Aggregate<string, Expression>(param, Expression.PropertyOrField);
             return (IOrderedQueryable<T>)source.Provider.CreateQuery(
                 Expression.Call(
-                    typeof(Queryable),
+                    typeof(System.Linq.Queryable),
                     methodName,
                     new[] { typeof(T), body.Type },
                     source.Expression,
@@ -154,11 +156,6 @@ namespace System.Linq
                 )
             );
         }
-
-        #endregion
-
-
-        #region Paging
 
         /// <summary>
         /// Paginate a sequence of values.
@@ -173,7 +170,5 @@ namespace System.Linq
         {
             return source.Skip(((page < 1 ? 1 : page) - 1) * pageSize).Take(pageSize);
         }
-
-        #endregion
     }
 }
