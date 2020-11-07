@@ -14,7 +14,7 @@ namespace ReHackt.Queryable.Extensions
         private const string OpenParenthesisPattern = @"^\($";
         private const string ClosedParenthesisPattern = @"^\)$";
         private const string BooleanOperatorPattern = "^and|or$";
-        private const string ComparisonOperatorPattern = "^eq|lt|gt|in$";
+        private const string ComparisonOperatorPattern = "^eq|lt|lte|gt|gte|in$";
         private const string BooleanValuePattern = @"^true|false$";
         private const string NumberValuePattern = @"^(\d+\.\d+)|\d+$";
         private const string StringValuePattern = @"^""[^""]+""$";
@@ -108,7 +108,9 @@ namespace ReHackt.Queryable.Extensions
                             {
                                 "eq" => ComparisonOperator.Equal,
                                 "gt" => ComparisonOperator.GreaterThan,
+                                "gte" => ComparisonOperator.GreaterThanOrEqual,
                                 "lt" => ComparisonOperator.LessThan,
+                                "lte" => ComparisonOperator.LessThanOrEqual,
                                 "in" => ComparisonOperator.Contains,
                                 _ => throw new NotImplementedException()
                             }
@@ -181,7 +183,9 @@ namespace ReHackt.Queryable.Extensions
                     {
                         ComparisonOperator.Equal => Expression.Equal(item1Expression, item2Expression),
                         ComparisonOperator.GreaterThan => Expression.GreaterThan(item1Expression, item2Expression),
+                        ComparisonOperator.GreaterThanOrEqual => Expression.GreaterThanOrEqual(item1Expression, item2Expression),
                         ComparisonOperator.LessThan => Expression.LessThan(item1Expression, item2Expression),
+                        ComparisonOperator.LessThanOrEqual => Expression.LessThanOrEqual(item1Expression, item2Expression),
                         ComparisonOperator.Contains => Expression.Call(item1IsProperty ? item1Expression : item2Expression, _containsMethod, item1IsProperty ? item2Expression : item1Expression),
                         _ => throw new NotImplementedException()
                     };
@@ -369,7 +373,9 @@ namespace ReHackt.Queryable.Extensions
     {
         Equal,
         GreaterThan,
+        GreaterThanOrEqual,
         LessThan,
+        LessThanOrEqual,
         Contains
     }
 }
