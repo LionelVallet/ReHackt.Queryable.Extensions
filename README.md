@@ -3,12 +3,21 @@ Some useful System.Linq.IQueryable extensions such as filtering, ordering, pagin
 
 ## QueryableFilter
 
+### Supported
+
+* Boolean operators: and, or
+* Comparison operators: eq, gt, gte, lt, lte, in
+* Value types: bool, DateTime, double, int, string
+
+### TO DO
+
+* Boolean operators: not
+* Value types: enum
+
 ## IQueryable extensions
 
-### ApplyFilter
+### Filtering
 
-### WhereIf
+### Ordering
 
-### PageBy
-
-### OrderBy, OrderByDescending, ThenBy, ThenByDescending
+### Paging
