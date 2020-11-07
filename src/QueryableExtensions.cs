@@ -15,10 +15,10 @@ namespace System.Linq
         /// <param name="filter">A filter to test each element for a condition.</param>
         /// <returns>An <see cref="IQueryable"/> that contains elements from the input sequence that satisfy the condition specified by filter.</returns>
         /// <exception cref="ArgumentNullException">Thrown when source or filter is null.</exception>
-        public static IQueryable<T> Filter<T>(this IQueryable<T> query, QueryableFilter<T> filter)
+        public static IQueryable<T> Filter<T>(this IQueryable<T> source, QueryableFilter<T> filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
-            return filter.Apply(query);
+            return filter.Apply(source);
         }
 
         /// <summary>
