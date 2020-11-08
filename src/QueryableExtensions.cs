@@ -1,8 +1,7 @@
-﻿using System.Linq;
+﻿using ReHackt.Queryable.Extensions;
 using System.Linq.Expressions;
-using System;
 
-namespace ReHackt.Queryable.Extensions
+namespace System.Linq
 {
     public static class QueryableExtensions
     {
@@ -84,7 +83,7 @@ namespace ReHackt.Queryable.Extensions
         /// <returns>An <see cref="IOrderedQueryable"/> whose elements are sorted in ascending order according to a key.</returns>
         public static IOrderedQueryable<T> OrderBy<T>(this IQueryable<T> source, string key)
         {
-            return CallOrderedQueryable(source, nameof(System.Linq.Queryable.OrderBy), key);
+            return CallOrderedQueryable(source, nameof(Queryable.OrderBy), key);
         }
 
         /// <summary>
@@ -115,7 +114,7 @@ namespace ReHackt.Queryable.Extensions
         /// <returns>An <see cref="IOrderedQueryable"/> whose elements are sorted in descending order according to a key.</returns>
         public static IOrderedQueryable<T> OrderByDescending<T>(this IQueryable<T> source, string key)
         {
-            return CallOrderedQueryable(source, nameof(System.Linq.Queryable.OrderByDescending), key);
+            return CallOrderedQueryable(source, nameof(Queryable.OrderByDescending), key);
         }
 
         /// <summary>
@@ -127,7 +126,7 @@ namespace ReHackt.Queryable.Extensions
         /// <returns>An <see cref="IOrderedQueryable"/> whose elements are sorted in ascending order according to a key.</returns>
         public static IOrderedQueryable<T> ThenBy<T>(this IOrderedQueryable<T> source, string key)
         {
-            return CallOrderedQueryable(source, nameof(System.Linq.Queryable.ThenBy), key);
+            return CallOrderedQueryable(source, nameof(Queryable.ThenBy), key);
         }
 
         /// <summary>
@@ -139,7 +138,7 @@ namespace ReHackt.Queryable.Extensions
         /// <returns>An <see cref="IOrderedQueryable"/> whose elements are sorted in descending order according to a key.</returns>
         public static IOrderedQueryable<T> ThenByDescending<T>(this IOrderedQueryable<T> source, string key)
         {
-            return CallOrderedQueryable(source, nameof(System.Linq.Queryable.ThenByDescending), key);
+            return CallOrderedQueryable(source, nameof(Queryable.ThenByDescending), key);
         }
 
         private static IOrderedQueryable<T> CallOrderedQueryable<T>(this IQueryable<T> source, string methodName, string key)
@@ -148,7 +147,7 @@ namespace ReHackt.Queryable.Extensions
             var body = key.Split('.').Aggregate<string, Expression>(param, Expression.PropertyOrField);
             return (IOrderedQueryable<T>)source.Provider.CreateQuery(
                 Expression.Call(
-                    typeof(System.Linq.Queryable),
+                    typeof(Queryable),
                     methodName,
                     new[] { typeof(T), body.Type },
                     source.Expression,
