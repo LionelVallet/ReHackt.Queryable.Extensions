@@ -52,9 +52,6 @@ namespace System.Linq
             return condition ? source.Where(predicate) : source;
         }
 
-
-
-
         /// <summary>
         /// Sorts the elements of a sequence in ascending order according to multiple keys.
         /// </summary>

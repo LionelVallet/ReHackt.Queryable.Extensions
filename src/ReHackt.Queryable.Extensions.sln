@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReHackt.Queryable.Extensions", "ReHackt.Queryable.Extensions.csproj", "{ED3D5852-0E88-4B23-98B7-586E6446A533}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReHackt.Queryable.Extensions.Tests", "..\ReHackt.Queryable.Extensions.Tests\ReHackt.Queryable.Extensions.Tests.csproj", "{EDC5BF0F-2E58-4FBB-8BCD-7A1443D14773}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReHackt.Queryable.Extensions.Tests", "..\tests\ReHackt.Queryable.Extensions.Tests.csproj", "{DBC5B045-34DA-4F92-8E35-19FC48D19ECF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{ED3D5852-0E88-4B23-98B7-586E6446A533}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED3D5852-0E88-4B23-98B7-586E6446A533}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED3D5852-0E88-4B23-98B7-586E6446A533}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EDC5BF0F-2E58-4FBB-8BCD-7A1443D14773}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDC5BF0F-2E58-4FBB-8BCD-7A1443D14773}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDC5BF0F-2E58-4FBB-8BCD-7A1443D14773}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDC5BF0F-2E58-4FBB-8BCD-7A1443D14773}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBC5B045-34DA-4F92-8E35-19FC48D19ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBC5B045-34DA-4F92-8E35-19FC48D19ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBC5B045-34DA-4F92-8E35-19FC48D19ECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBC5B045-34DA-4F92-8E35-19FC48D19ECF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

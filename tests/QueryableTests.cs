@@ -2,8 +2,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ReHackt.Queryable.Extensions;
-using System.Linq.Expressions;
 
 namespace ReHackt.Queryable.Extensions.Tests
 {
@@ -31,10 +29,10 @@ namespace ReHackt.Queryable.Extensions.Tests
         public void Filter_on_property_ending_with_number_works()
         {
             // arrange
-            var users = new List<User> { Hubert, Pierre };
+            var users = new List<User> { Hubert, Pierre }.AsQueryable();
 
             // act
-            var result = users.AsQueryable().Filter("FirstName1 eq \"Hubert\"");
+            var result = users.Filter("FirstName1 eq \"Hubert\"");
 
             // assert
             Assert.AreEqual(1, result.Count());

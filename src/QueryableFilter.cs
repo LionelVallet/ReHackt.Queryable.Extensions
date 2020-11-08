@@ -200,7 +200,7 @@ namespace ReHackt.Queryable.Extensions
         }
     }
 
-    public static class ElementExtensions
+    internal static class ElementExtensions
     {
         public static IList<Element> HandleComparisonElements(this IList<Element> elements)
         {
@@ -213,10 +213,8 @@ namespace ReHackt.Queryable.Extensions
                 }
                 else if (elements[i].Type == ElementType.ComparisonOperator)
                 {
-                    if ((elements[i - 1].Type == ElementType.Property
-                          && elements[i + 1].Type == ElementType.Value)
-                        || (elements[i - 1].Type == ElementType.Value 
-                            && elements[i + 1].Type == ElementType.Property))
+                    if ((elements[i - 1].Type == ElementType.Property && elements[i + 1].Type == ElementType.Value)
+                        || (elements[i - 1].Type == ElementType.Value && elements[i + 1].Type == ElementType.Property))
                     {
                         list.RemoveAt(list.Count - 1);
                         list.Add(new ComparisonQueryClause((ComparisonOperator)elements[i].Value, elements[i - 1], elements[i + 1]));
@@ -299,14 +297,14 @@ namespace ReHackt.Queryable.Extensions
         }
     }
 
-    public class Element
+    internal class Element
     {
         public ElementType Type { get; set; }
 
         public object Value { get; set; }
     }
 
-    public class Group : Element
+    internal class Group : Element
     {
         public Group(IList<Element> children)
         {
@@ -317,7 +315,7 @@ namespace ReHackt.Queryable.Extensions
         public IList<Element> Children { get => (IList<Element>)Value; set => Value = value; }
     }
 
-    public class BooleanQueryClause : Element
+    internal class BooleanQueryClause : Element
     {
         public BooleanQueryClause(BooleanOperator @operator, Element item1, Element item2)
         {
@@ -334,7 +332,7 @@ namespace ReHackt.Queryable.Extensions
         public Element Item2 { get; set; }
     }
 
-    public class ComparisonQueryClause : Element
+    internal class ComparisonQueryClause : Element
     {
         public ComparisonQueryClause(ComparisonOperator @operator, Element item1, Element item2)
         {
@@ -351,7 +349,7 @@ namespace ReHackt.Queryable.Extensions
         public Element Item2 { get; set; }
     }
 
-    public enum ElementType
+    internal enum ElementType
     {
         BooleanOperator,
         ComparisonOperator,
@@ -362,13 +360,13 @@ namespace ReHackt.Queryable.Extensions
         ComparisonQueryClause
     }
 
-    public enum BooleanOperator
+    internal enum BooleanOperator
     {
         And,
         Or
     }
 
-    public enum ComparisonOperator
+    internal enum ComparisonOperator
     {
         Equal,
         GreaterThan,
