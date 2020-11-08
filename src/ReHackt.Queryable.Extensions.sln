@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReHackt.Queryable.Extensions", "ReHackt.Queryable.Extensions.csproj", "{ED3D5852-0E88-4B23-98B7-586E6446A533}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReHackt.Queryable.Extensions.Tests", "..\tests\ReHackt.Queryable.Extensions.Tests.csproj", "{DBC5B045-34DA-4F92-8E35-19FC48D19ECF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReHackt.Queryable.Extensions.UnitTests", "..\tests\ReHackt.Queryable.Extensions.UnitTests.csproj", "{DBC5B045-34DA-4F92-8E35-19FC48D19ECF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

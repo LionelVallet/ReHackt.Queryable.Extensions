@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ReHackt.Queryable.Extensions.Tests
+namespace ReHackt.Queryable.Extensions.UnitTests.Models
 {
     public class Email
     {
         private readonly string _email;
+
         public Email(string email)
         {
             if (!email.Contains("@")) throw new ArgumentException("An e-mail must contain the @ character.");

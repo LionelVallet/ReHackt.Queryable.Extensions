@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ReHackt.Queryable.Extensions.Tests
+namespace ReHackt.Queryable.Extensions.UnitTests.Models
 {
     public class User
     {
@@ -13,5 +9,6 @@ namespace ReHackt.Queryable.Extensions.Tests
         public Email Email { get; set; }
         public DateTimeOffset Birthday { get; set; }
         public long Score { get; set; }
+        public double Amount { get; set; }
     }
 }
