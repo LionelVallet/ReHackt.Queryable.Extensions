@@ -73,7 +73,8 @@ namespace ReHackt.Queryable.Extensions
                     level--;
                     if (level < 0)
                     {
-                        if (firstLevel) throw new InvalidOperationException(); else break;
+                        if (firstLevel) throw new InvalidOperationException();
+                        break;
                     }
                 }
                 else if (Regex.IsMatch(token, OpenParenthesisPattern))
@@ -95,7 +96,7 @@ namespace ReHackt.Queryable.Extensions
                             {
                                 "and" => BooleanOperator.And,
                                 "or" => BooleanOperator.Or,
-                                _ => throw new NotImplementedException()
+                                _ => throw new NotImplementedException($"'{token}' operator is not implemented yet.")
                             }
                         });
                     }
@@ -112,7 +113,7 @@ namespace ReHackt.Queryable.Extensions
                                 "lt" => ComparisonOperator.LessThan,
                                 "lte" => ComparisonOperator.LessThanOrEqual,
                                 "in" => ComparisonOperator.Contains,
-                                _ => throw new NotImplementedException()
+                                _ => throw new NotImplementedException($"'{token}' comparison operator is not implemented yet.")
                             }
                         });
                     }
@@ -199,8 +200,6 @@ namespace ReHackt.Queryable.Extensions
         }
     }
 
-
-
     public static class ElementExtensions
     {
         public static IList<Element> HandleComparisonElements(this IList<Element> elements)
@@ -214,8 +213,10 @@ namespace ReHackt.Queryable.Extensions
                 }
                 else if (elements[i].Type == ElementType.ComparisonOperator)
                 {
-                    if ((elements[i - 1].Type == ElementType.Property && elements[i + 1].Type == ElementType.Value)
-                        || (elements[i - 1].Type == ElementType.Value && elements[i + 1].Type == ElementType.Property))
+                    if ((elements[i - 1].Type == ElementType.Property
+                          && elements[i + 1].Type == ElementType.Value)
+                        || (elements[i - 1].Type == ElementType.Value 
+                            && elements[i + 1].Type == ElementType.Property))
                     {
                         list.RemoveAt(list.Count - 1);
                         list.Add(new ComparisonQueryClause((ComparisonOperator)elements[i].Value, elements[i - 1], elements[i + 1]));
@@ -297,8 +298,6 @@ namespace ReHackt.Queryable.Extensions
             return element;
         }
     }
-
-
 
     public class Element
     {
