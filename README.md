@@ -29,14 +29,14 @@ IQueryable<User> users = _userManager.Users
 
 * Boolean operators: **and**, **or**
 * Comparison operators: **eq**, **gt**, **gte**, **lt**, **lte**, **in**
-* Value types: **bool**, **DateTime**, **double**, **int**, **string**
+* Value types: **bool**, **DateTime**, **double**, **enum**, **int**, **string**
 * **Parentheses**
 * **Property names**
 
 ### Not yet supported (planned)
 
 * Boolean operators: **not**
-* Value types: **enum**
+* Value types: **class**, **struct**
 
 ## IQueryable extensions
 
