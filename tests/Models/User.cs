@@ -10,5 +10,12 @@ namespace ReHackt.Queryable.Extensions.UnitTests.Models
         public DateTimeOffset Birthday { get; set; }
         public long Score { get; set; }
         public double Amount { get; set; }
+        public Status Status { get; set; }
+    }
+
+    public enum Status
+    {
+        Offline,
+        Online
     }
 }
