@@ -16,7 +16,7 @@ namespace ReHackt.Queryable.Extensions
         private const string BooleanOperatorPattern = "^and|or$";
         private const string ComparisonOperatorPattern = "^eq|lt|lte|gt|gte|in$";
         private const string BooleanValuePattern = @"^true|false$";
-        private const string NumberValuePattern = @"^(\d+\.\d+)|\d+$";
+        private const string NumberValuePattern = @"^((\d+\.\d+)|\d+)$";
         private const string StringValuePattern = @"^""[^""]+""$";
 
         private readonly MethodInfo _containsMethod = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
