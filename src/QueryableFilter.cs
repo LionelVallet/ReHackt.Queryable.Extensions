@@ -19,7 +19,8 @@ namespace ReHackt.Queryable.Extensions
         private const string NumberValuePattern = @"^((\d+\.\d+)|\d+)$";
         private const string StringValuePattern = @"^""[^""]+""$";
 
-        private readonly MethodInfo _containsMethod = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
+        private readonly MethodInfo _enumParseMethod = typeof(Enum).GetMethod(nameof(Enum.Parse), new[] { typeof(Type), typeof(string) });
+        private readonly MethodInfo _stringContainsMethod = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
         private readonly ParameterExpression _item = Expression.Parameter(typeof(T));
         private readonly Expression<Func<T, bool>> _expression;
 
@@ -177,9 +178,9 @@ namespace ReHackt.Queryable.Extensions
                     var item2Expression = GetExpression(comparisonQueryClause.Item2);
                     var item1IsProperty = comparisonQueryClause.Item1.Type == ElementType.Property;
                     if (item1IsProperty)
-                        item2Expression = Expression.Convert(item2Expression, item1Expression.Type);
+                        item2Expression = ConvertValue(item2Expression, item1Expression.Type);
                     else
-                        item1Expression = Expression.Convert(item1Expression, item2Expression.Type);
+                        item1Expression = ConvertValue(item1Expression, item2Expression.Type);
                     return comparisonQueryClause.Operator switch
                     {
                         ComparisonOperator.Equal => Expression.Equal(item1Expression, item2Expression),
@@ -187,7 +188,7 @@ namespace ReHackt.Queryable.Extensions
                         ComparisonOperator.GreaterThanOrEqual => Expression.GreaterThanOrEqual(item1Expression, item2Expression),
                         ComparisonOperator.LessThan => Expression.LessThan(item1Expression, item2Expression),
                         ComparisonOperator.LessThanOrEqual => Expression.LessThanOrEqual(item1Expression, item2Expression),
-                        ComparisonOperator.Contains => Expression.Call(item1IsProperty ? item1Expression : item2Expression, _containsMethod, item1IsProperty ? item2Expression : item1Expression),
+                        ComparisonOperator.Contains => Expression.Call(item1IsProperty ? item1Expression : item2Expression, _stringContainsMethod, item1IsProperty ? item2Expression : item1Expression),
                         _ => throw new NotImplementedException()
                     };
                 case Element value when value.Type == ElementType.Value:
@@ -196,6 +197,18 @@ namespace ReHackt.Queryable.Extensions
                     return Expression.Property(_item, property.Value.ToString());
                 default:
                     throw new InvalidOperationException();
+            }
+        }
+
+        private Expression ConvertValue(Expression value, Type type)
+        {
+            if (type.IsEnum)
+            {
+                return Expression.Constant(Expression.Lambda(Expression.Call(_enumParseMethod, Expression.Constant(type), value)).Compile().DynamicInvoke());
+            }
+            else
+            {
+                return Expression.Convert(value, type);
             }
         }
     }
