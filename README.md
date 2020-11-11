@@ -1,6 +1,22 @@
 # ReHackt.Queryable.Extensions
 Some useful System.Linq.IQueryable extensions such as filtering, ordering, paging...
 
+## Install
+
+Get it on <a href="https://www.nuget.org/packages/ReHackt.Queryable.Extensions"><img src="https://www.nuget.org/Content/gallery/img/default-package-icon.svg" height=18 style="height:18px;" /> NuGet</a>
+
+### Package Manager Console
+
+```
+PM> Install-Package ReHackt.Queryable.Extensions
+```
+
+### .NET CLI Console
+
+```
+> dotnet add package ReHackt.Queryable.Extensions
+```
+
 ## QueryableFilter
 
 `QueryableFilter<T>` allows to dynamically filter an `IQueryable<T>` with a query string. For example, this can be useful for an API whose clients can filter a collection of entities on any of its properties, or create complex logical queries.
