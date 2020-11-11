@@ -15,7 +15,7 @@ namespace ReHackt.Queryable.Extensions.UnitTests.Models
 
     public enum Status
     {
-        Offline,
-        Online
+        Offline = 0,
+        Online = 1
     }
 }

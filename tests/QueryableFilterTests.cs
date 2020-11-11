@@ -40,9 +40,16 @@ namespace ReHackt.Queryable.Extensions.UnitTests
         }
 
         [Fact]
-        public void Filter_on_value_type_property_works()
+        public void Filter_on_value_object_property_works()
         {
             var result = _users.Filter("Email eq \"durant@example.com\"");
+            result.Count().Should().Be(1);
+        }
+
+        [Fact]
+        public void Filter_on_date_time_property_works()
+        {
+            var result = _users.Filter("Birthday gt \"1999/01/01\"");
             result.Count().Should().Be(1);
         }
 
@@ -54,9 +61,16 @@ namespace ReHackt.Queryable.Extensions.UnitTests
         }
 
         [Fact]
-        public void Filter_on_enum_property_works()
+        public void Filter_on_enum_property_with_string_works()
         {
             var result = _users.Filter("Status eq \"Online\"");
+            result.Count().Should().Be(1);
+        }
+
+        [Fact]
+        public void Filter_on_enum_property_with_int_works()
+        {
+            var result = _users.Filter("Status eq 1");
             result.Count().Should().Be(1);
         }
     }
