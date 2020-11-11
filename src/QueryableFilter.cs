@@ -177,10 +177,13 @@ namespace ReHackt.Queryable.Extensions
                     var item1Expression = GetExpression(comparisonQueryClause.Item1);
                     var item2Expression = GetExpression(comparisonQueryClause.Item2);
                     var item1IsProperty = comparisonQueryClause.Item1.Type == ElementType.Property;
-                    if (item1IsProperty)
-                        item2Expression = ConvertValue(item2Expression, item1Expression.Type);
-                    else
-                        item1Expression = ConvertValue(item1Expression, item2Expression.Type);
+                    if (item1Expression.Type != item2Expression.Type)
+                    {
+                        if (item1IsProperty)
+                            item2Expression = ConvertValue(item2Expression, item1Expression.Type);
+                        else
+                            item1Expression = ConvertValue(item1Expression, item2Expression.Type);
+                    }
                     return comparisonQueryClause.Operator switch
                     {
                         ComparisonOperator.Equal => Expression.Equal(item1Expression, item2Expression),
@@ -202,7 +205,7 @@ namespace ReHackt.Queryable.Extensions
 
         private Expression ConvertValue(Expression value, Type type)
         {
-            if (type.IsEnum)
+            if (type.IsEnum && value.Type == typeof(string))
             {
                 return Expression.Constant(Expression.Lambda(Expression.Call(_enumParseMethod, Expression.Constant(type), value)).Compile().DynamicInvoke());
             }
