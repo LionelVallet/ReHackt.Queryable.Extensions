@@ -136,7 +136,7 @@ return source
 
 #### OrderBy, OrderByDescending, ThenBy, ThenByDescending
 
-These methods allow you to order dynamically an input sequence by a property whose name is taken as a string. OrderBy and OrderByDescending can take a variable number of arguments in order to sort the sequence according to several properties in the order of the arguments.
+These methods allow you to sort dynamically an input sequence according to a property from each element whose name is taken as a string. OrderBy and OrderByDescending can take a variable number of arguments in order to sort the sequence according to several properties in the order of the arguments.
 
 For example
 
