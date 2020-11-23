@@ -45,7 +45,7 @@ IQueryable<User> users = _userManager.Users
 
 * Boolean operators: **and**, **or**
 * Comparison operators: **eq**, **gt**, **gte**, **lt**, **lte**, **in**
-* Value types: **bool**, **DateTime**, **double**, **enum**, **int**, **string**
+* Value types: **bool**, **DateTime**, **double**, **enum**, **int**, **long**, **null**, **string**
 * **Parentheses**
 * **Property names**
 

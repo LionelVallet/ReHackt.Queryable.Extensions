@@ -11,6 +11,8 @@ namespace ReHackt.Queryable.Extensions.UnitTests.Models
         public long Score { get; set; }
         public double Amount { get; set; }
         public Status Status { get; set; }
+        public int? NullableInt { get; set; }
+        public string String { get; set; }
     }
 
     public enum Status

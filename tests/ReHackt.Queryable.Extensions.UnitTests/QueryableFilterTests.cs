@@ -18,7 +18,9 @@ namespace ReHackt.Queryable.Extensions.UnitTests
                 Birthday = new DateTimeOffset(1972, 02, 01, 0, 0, 0, TimeSpan.FromHours(2)),
                 Score = 186000,
                 Amount = 56.54,
-                Status = Status.Offline
+                Status = Status.Offline,
+                NullableInt = 8,
+                String = "string"
             },
             new User
             {
@@ -28,7 +30,9 @@ namespace ReHackt.Queryable.Extensions.UnitTests
                 Birthday = new DateTimeOffset(2000, 01, 01, 00, 00, 00, TimeSpan.Zero),
                 Score = 120,
                 Amount = 8191.03,
-                Status = Status.Online
+                Status = Status.Online,
+                NullableInt = null,
+                String = null
             }
         }.AsQueryable();
 
@@ -74,6 +78,11 @@ namespace ReHackt.Queryable.Extensions.UnitTests
             result.Count().Should().Be(1);
         }
 
-        // TODO null value
+        [Fact]
+        public void Filter_with_null_values_works()
+        {
+            var result = _users.Filter("NullableInt eq null and String eq null");
+            result.Count().Should().Be(1);
+        }
     }
 }
