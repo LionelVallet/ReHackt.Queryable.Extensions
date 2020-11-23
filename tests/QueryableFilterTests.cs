@@ -73,5 +73,7 @@ namespace ReHackt.Queryable.Extensions.UnitTests
             var result = _users.Filter("Status eq 1");
             result.Count().Should().Be(1);
         }
+
+        // TODO null value
     }
 }

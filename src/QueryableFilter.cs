@@ -10,26 +10,88 @@ namespace ReHackt.Queryable.Extensions
 {
     public class QueryableFilter<T>
     {
+        private readonly MethodInfo _enumParseMethod = typeof(Enum).GetMethod(nameof(Enum.Parse), new[] { typeof(Type), typeof(string) });
+        private readonly MethodInfo _stringContainsMethod = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
+        private readonly ParameterExpression _item = Expression.Parameter(typeof(T));
+        private readonly Expression<Func<T, bool>> _expression;
+
+        internal QueryableFilter() { }
+
+        internal QueryableFilter(Element element)
+            => _expression = Expression.Lambda<Func<T, bool>>(GetExpression(element), _item);
+
+        public IQueryable<T> Apply(IQueryable<T> queryable)
+        {
+            return queryable.WhereIf(_expression != null, _expression);
+        }
+
+        private Expression GetExpression(Element element)
+        {
+            switch (element)
+            {
+                case BooleanQueryClause booleanQueryClause:
+                    return booleanQueryClause.Operator switch
+                    {
+                        BooleanOperator.And => Expression.AndAlso(GetExpression(booleanQueryClause.Item1), GetExpression(booleanQueryClause.Item2)),
+                        BooleanOperator.Or => Expression.OrElse(GetExpression(booleanQueryClause.Item1), GetExpression(booleanQueryClause.Item2)),
+                        _ => throw new NotImplementedException()
+                    };
+                case ComparisonQueryClause comparisonQueryClause:
+                    var item1Expression = GetExpression(comparisonQueryClause.Item1);
+                    var item2Expression = GetExpression(comparisonQueryClause.Item2);
+                    var item1IsProperty = comparisonQueryClause.Item1.Type == ElementType.Property;
+                    if (item1Expression.Type != item2Expression.Type)
+                    {
+                        if (item1IsProperty)
+                            item2Expression = ConvertValue(item2Expression, item1Expression.Type);
+                        else
+                            item1Expression = ConvertValue(item1Expression, item2Expression.Type);
+                    }
+                    return comparisonQueryClause.Operator switch
+                    {
+                        ComparisonOperator.Equal => Expression.Equal(item1Expression, item2Expression),
+                        ComparisonOperator.GreaterThan => Expression.GreaterThan(item1Expression, item2Expression),
+                        ComparisonOperator.GreaterThanOrEqual => Expression.GreaterThanOrEqual(item1Expression, item2Expression),
+                        ComparisonOperator.LessThan => Expression.LessThan(item1Expression, item2Expression),
+                        ComparisonOperator.LessThanOrEqual => Expression.LessThanOrEqual(item1Expression, item2Expression),
+                        ComparisonOperator.Contains => Expression.Call(item1IsProperty ? item1Expression : item2Expression, _stringContainsMethod, item1IsProperty ? item2Expression : item1Expression),
+                        _ => throw new NotImplementedException()
+                    };
+                case Element value when value.Type == ElementType.Value:
+                    return Expression.Constant(value.Value);
+                case Element property when property.Type == ElementType.Property:
+                    return Expression.Property(_item, property.Value.ToString());
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        private Expression ConvertValue(Expression value, Type type)
+        {
+            if (type.IsEnum && value.Type == typeof(string))
+            {
+                return Expression.Constant(Expression.Lambda(Expression.Call(_enumParseMethod, Expression.Constant(type), value)).Compile().DynamicInvoke());
+            }
+            else
+            {
+                return Expression.Convert(value, type);
+            }
+        }
+    }
+
+    public static class QueryableFilter
+    {
         private const string TokenPattern = @"(""[^""]+""|(\d+\.\d+)|\w+|\(|\))\s*";
         private const string OpenParenthesisPattern = @"^\($";
         private const string ClosedParenthesisPattern = @"^\)$";
         private const string BooleanOperatorPattern = "^and|or$";
         private const string ComparisonOperatorPattern = "^eq|lt|lte|gt|gte|in$";
         private const string BooleanValuePattern = @"^true|false$";
+        private const string NullValuePattern = @"^null$";
         private const string NumberValuePattern = @"^((\d+\.\d+)|\d+)$";
         private const string StringValuePattern = @"^""[^""]+""$";
 
-        private readonly MethodInfo _enumParseMethod = typeof(Enum).GetMethod(nameof(Enum.Parse), new[] { typeof(Type), typeof(string) });
-        private readonly MethodInfo _stringContainsMethod = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
-        private readonly ParameterExpression _item = Expression.Parameter(typeof(T));
-        private readonly Expression<Func<T, bool>> _expression;
-
-        private QueryableFilter() { }
-
-        private QueryableFilter(Element element)
-            => _expression = Expression.Lambda<Func<T, bool>>(GetExpression(element), _item);
-
-        public static bool TryParse(string query, out QueryableFilter<T> filter)
+        public static bool TryParse<T>(string query, out QueryableFilter<T> filter)
         {
             if (string.IsNullOrWhiteSpace(query))
             {
@@ -55,11 +117,6 @@ namespace ReHackt.Queryable.Extensions
                 filter = null;
                 return false;
             }
-        }
-
-        public IQueryable<T> Apply(IQueryable<T> queryable)
-        {
-            return queryable.WhereIf(_expression != null, _expression);
         }
 
         private static IList<Element> ParseTokens(IEnumerable<string> tokens, bool firstLevel = false)
@@ -126,6 +183,14 @@ namespace ReHackt.Queryable.Extensions
                             Value = bool.Parse(token)
                         });
                     }
+                    else if (Regex.IsMatch(token, NullValuePattern))
+                    {
+                        elements.Add(new Element
+                        {
+                            Type = ElementType.Value,
+                            Value = null
+                        });
+                    }
                     else if (Regex.IsMatch(token, NumberValuePattern))
                     {
                         elements.Add(new Element
@@ -160,59 +225,6 @@ namespace ReHackt.Queryable.Extensions
                 throw new InvalidOperationException();
             }
             return elements;
-        }
-
-        private Expression GetExpression(Element element)
-        {
-            switch (element)
-            {
-                case BooleanQueryClause booleanQueryClause:
-                    return booleanQueryClause.Operator switch
-                    {
-                        BooleanOperator.And => Expression.AndAlso(GetExpression(booleanQueryClause.Item1), GetExpression(booleanQueryClause.Item2)),
-                        BooleanOperator.Or => Expression.OrElse(GetExpression(booleanQueryClause.Item1), GetExpression(booleanQueryClause.Item2)),
-                        _ => throw new NotImplementedException()
-                    };
-                case ComparisonQueryClause comparisonQueryClause:
-                    var item1Expression = GetExpression(comparisonQueryClause.Item1);
-                    var item2Expression = GetExpression(comparisonQueryClause.Item2);
-                    var item1IsProperty = comparisonQueryClause.Item1.Type == ElementType.Property;
-                    if (item1Expression.Type != item2Expression.Type)
-                    {
-                        if (item1IsProperty)
-                            item2Expression = ConvertValue(item2Expression, item1Expression.Type);
-                        else
-                            item1Expression = ConvertValue(item1Expression, item2Expression.Type);
-                    }
-                    return comparisonQueryClause.Operator switch
-                    {
-                        ComparisonOperator.Equal => Expression.Equal(item1Expression, item2Expression),
-                        ComparisonOperator.GreaterThan => Expression.GreaterThan(item1Expression, item2Expression),
-                        ComparisonOperator.GreaterThanOrEqual => Expression.GreaterThanOrEqual(item1Expression, item2Expression),
-                        ComparisonOperator.LessThan => Expression.LessThan(item1Expression, item2Expression),
-                        ComparisonOperator.LessThanOrEqual => Expression.LessThanOrEqual(item1Expression, item2Expression),
-                        ComparisonOperator.Contains => Expression.Call(item1IsProperty ? item1Expression : item2Expression, _stringContainsMethod, item1IsProperty ? item2Expression : item1Expression),
-                        _ => throw new NotImplementedException()
-                    };
-                case Element value when value.Type == ElementType.Value:
-                    return Expression.Constant(value.Value);
-                case Element property when property.Type == ElementType.Property:
-                    return Expression.Property(_item, property.Value.ToString());
-                default:
-                    throw new InvalidOperationException();
-            }
-        }
-
-        private Expression ConvertValue(Expression value, Type type)
-        {
-            if (type.IsEnum && value.Type == typeof(string))
-            {
-                return Expression.Constant(Expression.Lambda(Expression.Call(_enumParseMethod, Expression.Constant(type), value)).Compile().DynamicInvoke());
-            }
-            else
-            {
-                return Expression.Convert(value, type);
-            }
         }
     }
 

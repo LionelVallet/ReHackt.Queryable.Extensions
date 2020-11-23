@@ -31,7 +31,7 @@ namespace System.Linq
         /// <exception cref="ArgumentException">Thrown when filter query is invalid.</exception>
         public static IQueryable<T> Filter<T>(this IQueryable<T> source, string filterQuery)
         {
-            return QueryableFilter<T>.TryParse(filterQuery, out QueryableFilter<T> filter)
+            return QueryableFilter.TryParse(filterQuery, out QueryableFilter<T> filter)
                 ? source.Filter(filter)
                 : throw new ArgumentException("Invalid filter query", nameof(filterQuery));
         }
