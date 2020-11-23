@@ -77,6 +77,9 @@ namespace ReHackt.Queryable.Extensions
                 return Expression.Convert(value, type);
             }
         }
+
+        [Obsolete("QueryableFilter<T>.TryParse will be removed in version 2.0. Use QueryableFilter.TryParse instead.")]
+        public static bool TryParse(string query, out QueryableFilter<T> filter) => QueryableFilter.TryParse(query, out filter);
     }
 
     public static class QueryableFilter
