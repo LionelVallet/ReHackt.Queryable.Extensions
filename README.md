@@ -26,7 +26,7 @@ For example
 ``` csharp
 string query = @"BusinessName eq ""MyCompany"" and (""john.doe"" in Email or (FirstName eq ""John"" and LastName eq ""Doe"")) and (Amount lt 1000 or IsEnabled eq false)";
 
-if(QueryableFilter<User>.TryParse(query, out QueryableFilter<User> filter) {
+if(QueryableFilter.TryParse(query, out QueryableFilter<User> filter) {
     IQueryable<User> users = _userManager.Users.Filter(filter);
 }
 else { /* Handle invalid query */ };
@@ -81,7 +81,7 @@ source.Filter(filterQuery) // filterQuery is a string
 Is syntactic sugar for
 
 ``` csharp
-QueryableFilter<T>.TryParse(filterQuery, out QueryableFilter<T> filter) ?
+QueryableFilter.TryParse(filterQuery, out QueryableFilter<T> filter) ?
     source.Filter(filter) :
     throw new ArgumentException("Invalid filter query", nameof(filterQuery))
 ```
