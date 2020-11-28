@@ -25,6 +25,8 @@ namespace ReHackt.Queryable.Extensions
             return queryable.WhereIf(_expression != null, _expression);
         }
 
+        public Expression<Func<T, bool>> FilterExpression => _expression;
+
         private Expression GetExpression(Element element)
         {
             switch (element)
