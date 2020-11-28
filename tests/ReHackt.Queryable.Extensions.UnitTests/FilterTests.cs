@@ -21,19 +21,37 @@ namespace ReHackt.Queryable.Extensions.UnitTests
                 Amount = 56.54,
                 Status = Status.Offline,
                 NullableInt = 8,
-                String = "string"
+                String = "string",
+                Team = new Team
+                {
+                    Leader = new User
+                    {
+                        FirstName1 = "René",
+                        LastName = "Coty"
+                    },
+                    Name = "Frenchies"
+                }
             },
             new User
             {
-                FirstName1 = "Pierre",
-                LastName = "Durand",
-                Email = new Email("durant@example.com"),
+                FirstName1 = "James",
+                LastName = "Bond",
+                Email = new Email("007@mi6.gov.uk"),
                 Birthday = new DateTimeOffset(2000, 01, 01, 00, 00, 00, TimeSpan.Zero),
                 Score = 120,
                 Amount = 8191.03,
                 Status = Status.Online,
                 NullableInt = null,
-                String = null
+                String = null,
+                Team = new Team
+                {
+                    Leader = new User
+                    {
+                        FirstName1 = "Élisabeth",
+                        LastName = "d'York"
+                    },
+                    Name = "British"
+                }
             }
         }.AsQueryable();
 
@@ -84,6 +102,13 @@ namespace ReHackt.Queryable.Extensions.UnitTests
         public void Filter_with_null_values_works()
         {
             var result = _users.Filter("NullableInt eq null and String eq null");
+            result.Count().Should().Be(1);
+        }
+
+        [Fact]
+        public void Filter_on_nested_property_works()
+        {
+            var result = _users.Filter("Team.Leader.LastName eq \"Coty\"");
             result.Count().Should().Be(1);
         }
     }

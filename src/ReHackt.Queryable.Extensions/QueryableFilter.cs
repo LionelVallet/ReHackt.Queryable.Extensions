@@ -62,7 +62,7 @@ namespace ReHackt.Queryable.Extensions
                 case Element value when value.Type == ElementType.Value:
                     return Expression.Constant(value.Value);
                 case Element property when property.Type == ElementType.Property:
-                    return Expression.Property(_item, property.Value.ToString());
+                    return property.Value.ToString().Split('.').Aggregate<string, Expression>(_item, Expression.PropertyOrField);
                 default:
                     throw new InvalidOperationException();
             }
@@ -86,7 +86,7 @@ namespace ReHackt.Queryable.Extensions
 
     public static class QueryableFilter
     {
-        private const string TokenPattern = @"(""[^""]+""|(\d+\.\d+)|\w+|\(|\))\s*";
+        private const string TokenPattern = @"(""[^""]+""|(\d+\.\d+)|(\w+(\.\w+)*)|\(|\))\s*";
         private const string OpenParenthesisPattern = @"^\($";
         private const string ClosedParenthesisPattern = @"^\)$";
         private const string BooleanOperatorPattern = "^and|or$";

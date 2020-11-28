@@ -13,6 +13,7 @@ namespace ReHackt.Queryable.Extensions.UnitTests.Models
         public Status Status { get; set; }
         public int? NullableInt { get; set; }
         public string String { get; set; }
+        public Team Team { get; set; }
     }
 
     public enum Status
