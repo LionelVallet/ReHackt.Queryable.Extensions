@@ -7,7 +7,7 @@ using Xunit;
 
 namespace ReHackt.Queryable.Extensions.UnitTests
 {
-    public class QueryableFilterTests
+    public class FilterTests
     {
         private readonly IQueryable<User> _users = new List<User>
         {
@@ -36,6 +36,7 @@ namespace ReHackt.Queryable.Extensions.UnitTests
                 String = null
             }
         }.AsQueryable();
+
 
         [Fact]
         public void Filter_on_property_ending_with_number_works()
