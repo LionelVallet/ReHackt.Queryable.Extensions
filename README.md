@@ -44,15 +44,15 @@ IQueryable<User> users = _userManager.Users
 ### Supported in query
 
 * Boolean operators: **and**, **or**
-* Comparison operators: **eq**, **gt**, **gte**, **lt**, **lte**, **in**
+* Comparison operators: **eq**, **gt**, **gte**, **lt**, **lte**, **in** (`string.Contains` for now)
 * Value types: **bool**, **DateTime**, **double**, **enum**, **int**, **long**, **null**, **string**
 * **Parentheses**
-* **Property names**
+* **Property names** (nested properties supported)
 
 ### Not yet supported (planned)
 
 * Boolean operators: **not**
-* Value types: **class**, **struct**
+* Value types: **arrays** (for `in` operator)
 
 ## IQueryable extensions
 
