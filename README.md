@@ -26,7 +26,7 @@ For example
 ``` csharp
 string query = @"BusinessName eq ""MyCompany"" and (""john.doe"" in Email or (FirstName eq ""John"" and LastName eq ""Doe"")) and (Amount lt 1000 or IsEnabled eq false)";
 
-if(QueryableFilter<User>.TryParse(query, out QueryableFilter<User> filter) {
+if(QueryableFilter.TryParse(query, out QueryableFilter<User> filter) {
     IQueryable<User> users = _userManager.Users.Filter(filter);
 }
 else { /* Handle invalid query */ };
@@ -81,7 +81,7 @@ source.Filter(filterQuery) // filterQuery is a string
 Is syntactic sugar for
 
 ``` csharp
-QueryableFilter<T>.TryParse(filterQuery, out QueryableFilter<T> filter) ?
+QueryableFilter.TryParse(filterQuery, out QueryableFilter<T> filter) ?
     source.Filter(filter) :
     throw new ArgumentException("Invalid filter query", nameof(filterQuery))
 ```
@@ -136,7 +136,7 @@ return source
 
 #### OrderBy, OrderByDescending, ThenBy, ThenByDescending
 
-These methods allow you to sort dynamically an input sequence according to a property from each element whose name is taken as a string. OrderBy and OrderByDescending can take a variable number of arguments in order to sort the sequence according to several properties in the order of the arguments.
+These methods allow you to sort dynamically an input sequence according to a property from each element whose name is taken as a string. `OrderBy` and `OrderByDescending` can take a variable number of arguments in order to sort the sequence according to several properties in the order of the arguments.
 
 For example
 
