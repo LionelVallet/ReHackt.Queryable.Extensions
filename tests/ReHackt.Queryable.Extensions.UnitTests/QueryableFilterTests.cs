@@ -9,7 +9,8 @@ namespace ReHackt.Queryable.Extensions.UnitTests
 {
     public class QueryableFilterTests
     {
-        private readonly IQueryable<User> _users = new List<User>{
+        private readonly IQueryable<User> _users = new List<User>
+        {
             new User
             {
                 FirstName1 = "Hubert",
