@@ -95,7 +95,8 @@ namespace ReHackt.Queryable.Extensions
             }
             else
             {
-                return Expression.Convert(value, type);
+                try { return Expression.Convert(value, type); }
+                catch { return value; }
             }
         }
 
