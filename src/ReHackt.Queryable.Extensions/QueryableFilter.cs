@@ -226,10 +226,25 @@ namespace ReHackt.Queryable.Extensions
                     }
                     else if (Regex.IsMatch(token, ArrayValuePattern))
                     {
+                        // TODO : Replace with a Regex
+                        object value = null;
+                        try { value = JsonSerializer.Deserialize<double[]>(token); }
+                        catch
+                        {
+                            try { value = JsonSerializer.Deserialize<DateTimeOffset[]>(token); }
+                            catch
+                            {
+                                try { value = JsonSerializer.Deserialize<string[]>(token); }
+                                catch
+                                {
+                                    throw new ArgumentException("Array items type not supported.");
+                                }
+                            }
+                        }
                         elements.Add(new Element
                         {
                             Type = ElementType.Value,
-                            Value = JsonSerializer.Deserialize<Array>(token)
+                            Value = value
                         });
                     }
                     else if (Regex.IsMatch(token, StringValuePattern))
