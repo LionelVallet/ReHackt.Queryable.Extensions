@@ -42,7 +42,7 @@ namespace ReHackt.Queryable.Extensions
                     var item1Expression = GetExpression(comparisonQueryClause.Item1);
                     var item2Expression = GetExpression(comparisonQueryClause.Item2);
                     var item1IsProperty = comparisonQueryClause.Item1.Type == ElementType.Property;
-                    if (item1Expression.Type != item2Expression.Type)
+                    if (comparisonQueryClause.Operator != ComparisonOperator.Contains && item1Expression.Type != item2Expression.Type)
                     {
                         if (item1IsProperty)
                             item2Expression = ConvertValue(item2Expression, item1Expression.Type);
@@ -56,7 +56,7 @@ namespace ReHackt.Queryable.Extensions
                         ComparisonOperator.GreaterThanOrEqual => Expression.GreaterThanOrEqual(item1Expression, item2Expression),
                         ComparisonOperator.LessThan => Expression.LessThan(item1Expression, item2Expression),
                         ComparisonOperator.LessThanOrEqual => Expression.LessThanOrEqual(item1Expression, item2Expression),
-                        ComparisonOperator.Contains => Expression.Call(item1IsProperty ? item1Expression : item2Expression, _stringContainsMethod, item1IsProperty ? item2Expression : item1Expression),
+                        ComparisonOperator.Contains => Contains(item2Expression, item1Expression),
                         _ => throw new NotImplementedException()
                     };
                 case Element value when value.Type == ElementType.Value:
@@ -68,6 +68,25 @@ namespace ReHackt.Queryable.Extensions
             }
         }
 
+        private Expression Contains(Expression item1Expression, Expression item2Expression)
+        {
+            if (item1Expression.Type == typeof(string) && item2Expression.Type == typeof(string))
+            {
+                return Expression.Call(item1Expression, _stringContainsMethod, item2Expression);
+            }
+            else if (typeof(IEnumerable<>).MakeGenericType(item2Expression.Type).IsAssignableFrom(item1Expression.Type))
+            {
+                return Expression.Call(
+                    Expression.Convert(item1Expression, typeof(System.Collections.IList)),
+                    typeof(System.Collections.IList).GetMethod("Contains"),
+                    item2Expression);
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
         private Expression ConvertValue(Expression value, Type type)
         {
             if (type.IsEnum && value.Type == typeof(string))
@@ -76,7 +95,8 @@ namespace ReHackt.Queryable.Extensions
             }
             else
             {
-                return Expression.Convert(value, type);
+                try { return Expression.Convert(value, type); }
+                catch { return value; }
             }
         }
 
@@ -86,7 +106,7 @@ namespace ReHackt.Queryable.Extensions
 
     public static class QueryableFilter
     {
-        private const string TokenPattern = @"(""[^""]+""|(\d+\.\d+)|(\w+(\.\w+)*)|\(|\))\s*";
+        private const string TokenPattern = @"(\[[^\]]+\]|""[^""]+""|(\d+\.\d+)|(\w+(\.\w+)*)|\(|\))\s*";
         private const string OpenParenthesisPattern = @"^\($";
         private const string ClosedParenthesisPattern = @"^\)$";
         private const string BooleanOperatorPattern = "^and|or$";
@@ -95,6 +115,7 @@ namespace ReHackt.Queryable.Extensions
         private const string NullValuePattern = @"^null$";
         private const string NumberValuePattern = @"^((\d+\.\d+)|\d+)$";
         private const string StringValuePattern = @"^""[^""]+""$";
+        private const string ArrayValuePattern = @"^\[[^\]]+\]$";
 
         public static bool TryParse<T>(string query, out QueryableFilter<T> filter)
         {
@@ -105,7 +126,7 @@ namespace ReHackt.Queryable.Extensions
             }
             try
             {
-                var tokens = Regex.Matches(query, TokenPattern).Select(m => m.Groups[1].Value);
+                var tokens = Regex.Matches(query, TokenPattern).Cast<Match>().Select(m => m.Groups[1].Value);
                 var elements = ParseTokens(tokens, true)
                     .HandleComparisonElements()
                     .HandleBooleanElements(BooleanOperator.And)
@@ -204,10 +225,33 @@ namespace ReHackt.Queryable.Extensions
                             Value = double.Parse(token, NumberFormatInfo.InvariantInfo)
                         });
                     }
+                    else if (Regex.IsMatch(token, ArrayValuePattern))
+                    {
+                        // TODO : Replace with a Regex
+                        object value = null;
+                        try { value = JsonSerializer.Deserialize<double[]>(token); }
+                        catch
+                        {
+                            try { value = JsonSerializer.Deserialize<DateTimeOffset[]>(token); }
+                            catch
+                            {
+                                try { value = JsonSerializer.Deserialize<string[]>(token); }
+                                catch
+                                {
+                                    throw new ArgumentException("Array items type not supported.");
+                                }
+                            }
+                        }
+                        elements.Add(new Element
+                        {
+                            Type = ElementType.Value,
+                            Value = value
+                        });
+                    }
                     else if (Regex.IsMatch(token, StringValuePattern))
                     {
                         object value = token.Trim('"');
-                        if (DateTime.TryParse(value.ToString(), out DateTime dateValue)) { value = dateValue; }
+                        if (DateTimeOffset.TryParse(value.ToString(), out DateTimeOffset dateValue)) { value = dateValue; }
                         elements.Add(new Element
                         {
                             Type = ElementType.Value,
