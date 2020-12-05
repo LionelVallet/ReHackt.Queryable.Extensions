@@ -66,13 +66,6 @@ namespace ReHackt.Queryable.Extensions.UnitTests
         }
 
         [Fact]
-        public void Filter_on_value_object_property_works()
-        {
-            var result = _users.Filter("Email eq \"durant@example.com\"");
-            result.Count().Should().Be(1);
-        }
-
-        [Fact]
         public void Filter_on_date_time_property_works()
         {
             var result = _users.Filter("Birthday gt \"1999/01/01\"");
