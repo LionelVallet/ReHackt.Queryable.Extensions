@@ -30,7 +30,8 @@ namespace ReHackt.Queryable.Extensions.UnitTests
                         LastName = "Coty"
                     },
                     Name = "Frenchies"
-                }
+                },
+                Tags = new List<string>{ "Tag1", "Tag2" }
             },
             new User
             {
@@ -51,7 +52,8 @@ namespace ReHackt.Queryable.Extensions.UnitTests
                         LastName = "d'York"
                     },
                     Name = "British"
-                }
+                },
+                Tags = new List<string>()
             }
         }.AsQueryable();
 
@@ -109,6 +111,34 @@ namespace ReHackt.Queryable.Extensions.UnitTests
         public void Filter_on_nested_property_works()
         {
             var result = _users.Filter("Team.Leader.LastName eq \"Coty\"");
+            result.Count().Should().Be(1);
+        }
+
+        [Fact]
+        public void Filter_on_enumerable_property_works()
+        {
+            var result = _users.Filter("\"Tag2\" in Tags");
+            result.Count().Should().Be(1);
+        }
+
+        [Fact]
+        public void Filter_on_property_contained_in_array_works()
+        {
+            var result = _users.Filter("LastName in [\"Bing\", \"Bang\", \"Bond\"]");
+            result.Count().Should().Be(1);
+        }
+
+        [Fact]
+        public void Filter_on_string_property_content_works()
+        {
+            var result = _users.Filter("\"Bath\" in LastName");
+            result.Count().Should().Be(1);
+        }
+
+        [Fact]
+        public void Filter_on_string_property_contained_in_string_works()
+        {
+            var result = _users.Filter("LastName in \"Bing Bang Bond\"");
             result.Count().Should().Be(1);
         }
     }

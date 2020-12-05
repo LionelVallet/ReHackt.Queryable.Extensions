@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ReHackt.Queryable.Extensions.UnitTests.Models
 {
@@ -14,6 +15,7 @@ namespace ReHackt.Queryable.Extensions.UnitTests.Models
         public int? NullableInt { get; set; }
         public string String { get; set; }
         public Team Team { get; set; }
+        public IEnumerable<string> Tags { get; set; }
     }
 
     public enum Status
