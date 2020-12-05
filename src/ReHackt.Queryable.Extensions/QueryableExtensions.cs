@@ -140,7 +140,9 @@ namespace System.Linq
 
         private static IOrderedQueryable<T> CallOrderedQueryable<T>(this IQueryable<T> source, string methodName, string key)
         {
-            var param = Expression.Parameter(typeof(T), "x");
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException(nameof(key));
+
+            var param = Expression.Parameter(typeof(T));
             var body = key.Split('.').Aggregate<string, Expression>(param, Expression.PropertyOrField);
             return (IOrderedQueryable<T>)source.Provider.CreateQuery(
                 Expression.Call(
