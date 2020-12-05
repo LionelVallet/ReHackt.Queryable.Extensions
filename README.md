@@ -24,10 +24,10 @@ PM> Install-Package ReHackt.Queryable.Extensions
 For example
 
 ``` csharp
-string query = @"BusinessName eq ""MyCompany"" and (""john.doe"" in Email or (FirstName eq ""John"" and LastName eq ""Doe"")) and (Amount lt 1000 or IsEnabled eq false)";
+string query = @"Name eq ""Bond"" and (""james"" in Email or (Status in [1, 2] and ""007"" in Codes)) and (Amount lt 1000 or IsEnabled eq false)";
 
-if(QueryableFilter.TryParse(query, out QueryableFilter<User> filter) {
-    IQueryable<User> users = _userManager.Users.Filter(filter);
+if(QueryableFilter.TryParse(query, out QueryableFilter<Agent> filter) {
+    IQueryable<Agent> agents = _agentManager.Agents.Filter(filter);
 }
 else { /* Handle invalid query */ };
 ```
@@ -35,24 +35,24 @@ else { /* Handle invalid query */ };
 Is equivalent to
 
 ``` csharp
-IQueryable<User> users = _userManager.Users
-                            .Where(u => u.BusinessName == "MyCompany"
-                                && (u.Email.Contains("john.doe") || (u.FirstName == "John" && u.LastName == "Doe"))
-                                && (u.Amount < 1000 || u.IsEnabled == false);
+IQueryable<Agent> agents = _agentManager.Agents
+    .Where(u => u.Name == "Bond"
+        && (u.Email.Contains("james")
+            || (new int[] { 1, 2 }.Contains(Status) && u.Codes.Contains("007")))
+        && (u.Amount < 1000 || u.IsEnabled == false);
 ```
 
 ### Supported in query
 
 * Boolean operators: **and**, **or**
-* Comparison operators: **eq**, **gt**, **gte**, **lt**, **lte**, **in** (`string.Contains` for now)
-* Value types: **bool**, **DateTime**, **double**, **enum**, **int**, **long**, **null**, **string**
+* Comparison operators: **eq**, **gt**, **gte**, **lt**, **lte**, **in** (`string.Contains` or `IList.Contains`)
+* Value types: **bool**, **DateTime**, **double**, **enum**, **int**, **long**, **null**, **string**, **DateTime[]**, **double[]**, **int[]**, **string[]**
 * **Parentheses**
 * **Property names** (nested properties supported)
 
 ### Not yet supported (planned)
 
 * Boolean operators: **not**
-* Value types: **arrays** (for `in` operator)
 
 ## IQueryable extensions
 
@@ -104,20 +104,20 @@ For example
 
 ``` csharp
 return source
-           .Join(...)
-           .Where(...)
-           .WhereIf(condition1, predicate1)
-           .WhereIf(condition2, predicate2)
-           .OrderBy(...)
-           .Select(...);
+            .Join(...)
+            .Where(...)
+            .WhereIf(condition1, predicate1)
+            .WhereIf(condition2, predicate2)
+            .OrderBy(...)
+            .Select(...);
 ```
 
 Is equivalent to
 
 ``` csharp
-source = source
-             .Join(...)
-             .Where(...);
+source = source            
+            .Join(...)
+            .Where(...);
 
 if(condition1) {
     source = source.Where(predicate1);
@@ -128,8 +128,8 @@ if(condition2) {
 }
 
 return source
-           .OrderBy(...)
-           .Select(...);
+            .OrderBy(...)
+            .Select(...);
 ```
 
 ### Ordering
