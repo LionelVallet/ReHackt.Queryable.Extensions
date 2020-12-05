@@ -235,7 +235,7 @@ namespace ReHackt.Queryable.Extensions
                     else if (Regex.IsMatch(token, StringValuePattern))
                     {
                         object value = token.Trim('"');
-                        if (DateTime.TryParse(value.ToString(), out DateTime dateValue)) { value = dateValue; }
+                        if (DateTimeOffset.TryParse(value.ToString(), out DateTimeOffset dateValue)) { value = dateValue; }
                         elements.Add(new Element
                         {
                             Type = ElementType.Value,
